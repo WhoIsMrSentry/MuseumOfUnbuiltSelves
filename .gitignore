@@ -1,0 +1,7 @@
+node_modules
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+dist
+.cache

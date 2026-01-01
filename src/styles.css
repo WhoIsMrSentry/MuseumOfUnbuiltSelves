@@ -1,0 +1,620 @@
+:root {
+    --bg: #0b0b0b;
+    --card: #111217;
+    --accent: #88001b;
+    --muted: #9aa0a6;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1000px 700px at 50% 0%, rgba(136, 0, 27, 0.22), rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0.97) 100%);
+    background-attachment: fixed;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* İnce yıldız/toz katmanı (detay hissi) */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.18;
+    background-image:
+        radial-gradient(circle at 12% 18%, rgba(136, 0, 27, 0.28) 0 1px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 28% 62%, rgba(136, 0, 27, 0.22) 0 1px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 55% 34%, rgba(136, 0, 27, 0.24) 0 1px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 72% 70%, rgba(136, 0, 27, 0.20) 0 1px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 88% 22%, rgba(136, 0, 27, 0.22) 0 1px, rgba(0, 0, 0, 0) 2px),
+        radial-gradient(circle at 42% 84%, rgba(136, 0, 27, 0.18) 0 1px, rgba(0, 0, 0, 0) 2px);
+    background-size: 460px 460px;
+    background-repeat: repeat;
+    mix-blend-mode: normal;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px;
+    position: relative;
+    --enter-x: 50%;
+    --enter-y: 22%;
+}
+
+.scene {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.app.entering .enter-cta {
+    transform-origin: var(--enter-x) var(--enter-y);
+    animation: museum-dive-in 850ms cubic-bezier(0.16, 0.92, 0.16, 1) forwards;
+    will-change: transform, filter, opacity;
+}
+
+@keyframes museum-dive-in {
+    0% {
+        transform: scale(1);
+        filter: blur(0px);
+        opacity: 1;
+    }
+
+    65% {
+        transform: scale(3.2);
+        filter: blur(1.2px);
+        opacity: 0.65;
+    }
+
+    100% {
+        transform: scale(8);
+        filter: blur(2.2px);
+        opacity: 0;
+    }
+}
+
+.enter-overlay {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 55;
+    opacity: 0;
+    background:
+        radial-gradient(520px 520px at var(--enter-x) var(--enter-y), rgba(136, 0, 27, 0.22), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(1200px 900px at 50% 40%, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.92) 70%);
+    animation: enter-veil 850ms cubic-bezier(0.16, 0.92, 0.16, 1) forwards;
+    will-change: opacity;
+}
+
+@keyframes enter-veil {
+    0% {
+        opacity: 0;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    86% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Referans görseldeki gibi perspektif ızgara + neon ışık */
+.app::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.86;
+}
+
+/* Üstteyken: ışık center-top */
+.app[data-light="top"]::before {
+    background:
+        radial-gradient(1200px 820px at 50% 0%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 60%),
+    radial-gradient(900px 520px at 50% 10%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0) 64%),
+    radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
+    radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
+    radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+    radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%);
+}
+
+/* Scroll başlayınca: ışık tam merkez */
+.app[data-light="center"]::before {
+    background:
+        radial-gradient(1200px 820px at 50% 42%, rgba(136, 0, 27, 0.30), rgba(0, 0, 0, 0) 62%),
+    radial-gradient(900px 520px at 50% 45%, rgba(136, 0, 27, 0.14), rgba(0, 0, 0, 0) 66%),
+    radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+    radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+    radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%),
+    radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%);
+}
+
+.app::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    /* Işık her zaman merkezde: kaydırınca da sabit (fixed) */
+    mix-blend-mode: normal;
+    opacity: 0.68;
+    filter: saturate(175%) contrast(112%);
+}
+
+.app[data-light="top"]::after {
+    background:
+        radial-gradient(1200px 680px at 50% 8%, rgba(136, 0, 27, 0.22), rgba(0, 0, 0, 0) 60%),
+        radial-gradient(520px 520px at 0% 0%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0) 72%),
+        radial-gradient(520px 520px at 100% 0%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0) 72%),
+        radial-gradient(520px 520px at 0% 100%, rgba(136, 0, 27, 0.12), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(520px 520px at 100% 100%, rgba(136, 0, 27, 0.12), rgba(0, 0, 0, 0) 74%),
+        linear-gradient(90deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(136, 0, 27, 0.00) 40%,
+            rgba(136, 0, 27, 0.18) 47%,
+            rgba(136, 0, 27, 0.36) 50%,
+            rgba(136, 0, 27, 0.18) 53%,
+            rgba(136, 0, 27, 0.00) 60%,
+            rgba(0, 0, 0, 0) 100%
+        );
+}
+
+.app[data-light="center"]::after {
+    background:
+        radial-gradient(1200px 680px at 50% 48%, rgba(136, 0, 27, 0.20), rgba(0, 0, 0, 0) 62%),
+        radial-gradient(520px 520px at 0% 0%, rgba(136, 0, 27, 0.14), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(520px 520px at 100% 0%, rgba(136, 0, 27, 0.14), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(520px 520px at 0% 100%, rgba(136, 0, 27, 0.12), rgba(0, 0, 0, 0) 76%),
+        radial-gradient(520px 520px at 100% 100%, rgba(136, 0, 27, 0.12), rgba(0, 0, 0, 0) 76%),
+        linear-gradient(90deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(136, 0, 27, 0.00) 40%,
+            rgba(136, 0, 27, 0.18) 47%,
+            rgba(136, 0, 27, 0.36) 50%,
+            rgba(136, 0, 27, 0.18) 53%,
+            rgba(136, 0, 27, 0.00) 60%,
+            rgba(0, 0, 0, 0) 100%
+        );
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.16;
+    background-image:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 58px),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, rgba(0,  0,  0, 0) 1px, rgba(0, 0, 0, 0) 58px);
+    background-position: -17px -31px;
+    transform-origin: 50% 0%;
+    transform: perspective(900px) rotateX(68deg) translateY(-18%);
+    filter: blur(0.35px);
+    /* Kartların arkasında “satır çizgisi” gibi görünmesin diye daha erken söndür */
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.45) 22%, rgba(0, 0, 0, 0.0) 46%);
+}
+
+.app > * {
+    position: relative;
+    z-index: 1;
+}
+
+.enter-cta {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    justify-content: center;
+    margin: 18px 0 6px;
+}
+
+.enter-button {
+    height: 56px;
+    padding: 0 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(136, 0, 27, 0.55);
+    background: rgba(136, 0, 27, 0.18);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(136, 0, 27, 0.18),
+        0 0 26px rgba(136, 0, 27, 0.18);
+    transition: box-shadow .18s ease, border-color .18s ease;
+}
+
+.enter-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.enter-button:hover,
+.enter-button:focus-visible {
+    border-color: rgba(136, 0, 27, 0.85);
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(136, 0, 27, 0.35),
+        0 0 34px rgba(136, 0, 27, 0.30);
+}
+
+.hero {
+    max-width: 980px;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.hero h1 {
+    font-size: 44px;
+    color: #f5dbe2;
+    margin: 0 0 14px 0;
+    letter-spacing: 0.2px;
+    text-shadow:
+        0 0 28px rgba(136, 0, 27, 0.12),
+        0 0 10px rgba(136, 0, 27, 0.10);
+}
+
+.hero p {
+    color: var(--muted);
+    line-height: 1.5
+}
+
+.token-banner {
+    width: 100%;
+    max-width: 980px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 999px;
+    padding: 14px;
+    margin: 0 0 18px 0;
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.token-banner-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.token-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.token-title {
+    margin: 0;
+    font-weight: 700;
+    color: #f0c8d1;
+}
+
+.token-sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.token-input {
+    flex: 1;
+    min-width: 260px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(136, 0, 27, 0.22);
+    background: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    padding: 0 12px;
+    outline: none;
+}
+
+.token-button {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(136, 0, 27, 0.40);
+    background: rgba(136, 0, 27, 0.16);
+    color: #fff;
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+.token-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.token-status {
+    margin: 10px 0 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: left;
+}
+
+.token-error {
+    color: var(--accent);
+}
+
+.library-grid {
+    width: 100%;
+    max-width: 1680px;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media(min-width:720px) {
+    .library-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media(min-width:1024px) {
+    .library-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media(min-width:1440px) {
+    .library-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 18px;
+    padding: 24px;
+    min-height: 420px;
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.78),
+        0 0 0 1px rgba(136, 0, 27, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    outline: 5px solid rgba(136, 0, 27, 0.24);
+    outline-offset: 0;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: box-shadow .18s ease, outline-color .18s ease, border-color .18s ease;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Kartlar cam gibi dursun ama her kartın arkasında ayrı ışık patlaması olmasın */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0) 55%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0) 38%);
+    opacity: 0.32;
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image:
+        url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='220'%20height='220'%20viewBox='0%200%20220%20220'%3E%3Cg%20fill='rgba(255,255,255,0.18)'%3E%3Ccircle%20cx='18'%20cy='36'%20r='1'/%3E%3Ccircle%20cx='72'%20cy='18'%20r='1'/%3E%3Ccircle%20cx='120'%20cy='54'%20r='1'/%3E%3Ccircle%20cx='182'%20cy='28'%20r='1'/%3E%3Ccircle%20cx='34'%20cy='124'%20r='1'/%3E%3Ccircle%20cx='96'%20cy='142'%20r='1'/%3E%3Ccircle%20cx='164'%20cy='118'%20r='1'/%3E%3Ccircle%20cx='200'%20cy='172'%20r='1'/%3E%3Ccircle%20cx='58'%20cy='192'%20r='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    mix-blend-mode: screen;
+}
+
+.card-media {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.card-img {
+    width: 100%;
+    height: 190px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    background: linear-gradient(180deg, #0f0f10, #060607);
+    margin-bottom: 12px;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 16px 30px rgba(0, 0, 0, 0.55);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.card:hover,
+.card:focus-within {
+    outline-color: rgba(136, 0, 27, 0.45);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.82),
+    0 0 0 1px rgba(136, 0, 27, 0.34),
+    0 0 34px rgba(136, 0, 27, 0.28);
+}
+
+.card h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: #eab0c0
+}
+
+.card p {
+    margin: 0 0 14px 0;
+    color: var(--muted);
+    font-size: 15px
+}
+
+.tracks {
+    margin-top: auto;
+    color: #cfcfcf;
+    font-size: 13px
+}
+
+.tracks {
+    font-weight: 600
+}
+
+.playlist-desc {
+    /* Tüm açıklama görünsün */
+    display: block;
+    overflow: visible;
+}
+
+@media(min-width:1024px) {
+    .card {
+        padding: 28px;
+    }
+
+    .card-img {
+        width: 100%;
+        height: 210px;
+    }
+
+    .card h2 {
+        font-size: 22px
+    }
+
+    .card p {
+        font-size: 15px
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(1200px 700px at 50% 0%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0.88) 55%, rgba(0, 0, 0, 0.94) 100%),
+        radial-gradient(900px 600px at 15% 15%, rgba(255, 255, 255, 0.04), transparent 60%),
+        radial-gradient(900px 600px at 85% 15%, rgba(255, 255, 255, 0.03), transparent 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    z-index: 60;
+    backdrop-filter: blur(6px);
+}
+
+.modal {
+    background: rgba(17, 18, 23, 0.58);
+    border-radius: 18px;
+    padding: 28px 22px;
+    max-width: 1100px;
+    width: min(1100px, calc(100vw - 36px));
+    height: min(860px, calc(100vh - 36px));
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.72),
+        inset 0 0 0 1px rgba(136, 0, 27, 0.22);
+    backdrop-filter: blur(14px);
+    text-align: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Seçili playlist kapağı: arkada belirsiz/blurlu (cam efekti bozmadan) */
+.modal::before {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    background-image: var(--modal-cover, none);
+    background-size: cover;
+    background-position: center;
+    filter: blur(14px) saturate(130%) contrast(118%);
+    opacity: 0.34;
+    transform: scale(1.08);
+    z-index: 0;
+}
+
+.modal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(900px 520px at 50% 18%, rgba(136, 0, 27, 0.10), rgba(0, 0, 0, 0) 62%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.58));
+    opacity: 0.86;
+    z-index: 0;
+}
+
+.modal > * {
+    position: relative;
+    z-index: 1;
+}
+
+.modal .close {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 22px;
+    cursor: pointer
+}
+
+.playlist-title {
+    color: var(--accent);
+    font-size: 20px;
+    margin-bottom: 8px
+}
+
+.playlist-desc {
+    color: var(--muted);
+    margin-bottom: 12px
+}
+
+.playlist-iframe {
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    flex: 1;
+}
+
+@media (min-width: 720px) {
+    .modal {
+        padding: 34px 34px;
+    }
+}
