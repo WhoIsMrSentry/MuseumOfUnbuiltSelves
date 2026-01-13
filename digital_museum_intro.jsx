@@ -640,6 +640,12 @@ export default function MuseumIntro() {
                     setSelected(p);
                   }}
                 >
+                  <div className="card-runes" aria-hidden="true">
+                    <span className="rune rune-top" />
+                    <span className="rune rune-right" />
+                    <span className="rune rune-bottom" />
+                    <span className="rune rune-left" />
+                  </div>
                   <img src={p.coverUrl || PLACEHOLDER_COVER_DATA_URI} alt={p.title} className="card-img card-img-top" />
                   <div className="card-content">
                     <h2 className="playlist-title">{p.title}</h2>
