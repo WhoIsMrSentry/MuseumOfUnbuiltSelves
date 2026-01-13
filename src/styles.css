@@ -135,22 +135,22 @@ body::after {
 .app[data-light="top"]::before {
     background:
         radial-gradient(1200px 820px at 50% 0%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 60%),
-    radial-gradient(900px 520px at 50% 10%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0) 64%),
-    radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
-    radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
-    radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
-    radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%);
+        radial-gradient(900px 520px at 50% 10%, rgba(136, 0, 27, 0.16), rgba(0, 0, 0, 0) 64%),
+        radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
+        radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.46), rgba(0, 0, 0, 0) 72%),
+        radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%);
 }
 
 /* Scroll başlayınca: ışık tam merkez */
 .app[data-light="center"]::before {
     background:
         radial-gradient(1200px 820px at 50% 42%, rgba(136, 0, 27, 0.30), rgba(0, 0, 0, 0) 62%),
-    radial-gradient(900px 520px at 50% 45%, rgba(136, 0, 27, 0.14), rgba(0, 0, 0, 0) 66%),
-    radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
-    radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
-    radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%),
-    radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%);
+        radial-gradient(900px 520px at 50% 45%, rgba(136, 0, 27, 0.14), rgba(0, 0, 0, 0) 66%),
+        radial-gradient(560px 560px at 0% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(560px 560px at 100% 0%, rgba(136, 0, 27, 0.36), rgba(0, 0, 0, 0) 74%),
+        radial-gradient(560px 560px at 0% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%),
+        radial-gradient(560px 560px at 100% 100%, rgba(136, 0, 27, 0.34), rgba(0, 0, 0, 0) 76%);
 }
 
 .app::after {
@@ -179,8 +179,7 @@ body::after {
             rgba(136, 0, 27, 0.36) 50%,
             rgba(136, 0, 27, 0.18) 53%,
             rgba(136, 0, 27, 0.00) 60%,
-            rgba(0, 0, 0, 0) 100%
-        );
+            rgba(0, 0, 0, 0) 100%);
 }
 
 .app[data-light="center"]::after {
@@ -197,8 +196,7 @@ body::after {
             rgba(136, 0, 27, 0.36) 50%,
             rgba(136, 0, 27, 0.18) 53%,
             rgba(136, 0, 27, 0.00) 60%,
-            rgba(0, 0, 0, 0) 100%
-        );
+            rgba(0, 0, 0, 0) 100%);
 }
 
 body::before {
@@ -210,7 +208,7 @@ body::before {
     opacity: 0.16;
     background-image:
         repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 58px),
-        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, rgba(0,  0,  0, 0) 1px, rgba(0, 0, 0, 0) 58px);
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 58px);
     background-position: -17px -31px;
     transform-origin: 50% 0%;
     transform: perspective(900px) rotateX(68deg) translateY(-18%);
@@ -219,7 +217,7 @@ body::before {
     mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.45) 22%, rgba(0, 0, 0, 0.0) 46%);
 }
 
-.app > * {
+.app>* {
     position: relative;
     z-index: 1;
 }
@@ -364,9 +362,13 @@ body::before {
 
 .library-grid {
     width: 100%;
-    max-width: 1680px;
+    max-width: 1450px;
+    /* Kartları büyütmek için genişliği artırdım */
+    margin: 0 auto;
+    /* Ortala */
     display: grid;
-    gap: 18px;
+    gap: 80px;
+    /* Mobilde genişlik */
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
@@ -376,15 +378,11 @@ body::before {
     }
 }
 
-@media(min-width:1024px) {
+@media(min-width:1150px) {
     .library-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
-
-@media(min-width:1440px) {
-    .library-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 200px;
+        /* Uçların değmesini engellemek için artırıldı */
     }
 }
 
@@ -404,8 +402,180 @@ body::before {
     cursor: pointer;
     transition: box-shadow .18s ease, outline-color .18s ease, border-color .18s ease;
     backdrop-filter: blur(10px);
-    overflow: hidden;
+    overflow: visible;
     position: relative;
+    /* Kartın kendisi */
+}
+
+/* Runik süslemeler: dört köşeye küçük kadim çizimler */
+.card-runes {
+    position: absolute;
+    inset: 0;
+    /* Kart sınırlarını baz al */
+    pointer-events: none;
+    z-index: 10;
+    mix-blend-mode: normal;
+    overflow: visible;
+    display: block;
+    background: none;
+    filter: drop-shadow(0 0 10px rgba(136, 0, 27, 0.4));
+}
+
+.card-runes .rune {
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Üst ve Alt */
+.rune-top,
+.rune-bottom {
+    /* Yanlara doğru uzatıp köşeleri kapatmak için negatif margin */
+    left: -45px;
+    right: -45px;
+    width: auto;
+    height: 75px;
+    background-size: 100% auto;
+}
+
+.rune-top {
+    top: -45px;
+    /* Karta yaklaştırıldı ama outline dışı */
+    background-image: url("/bannerT.png");
+}
+
+.rune-bottom {
+    bottom: -45px;
+    background-image: url("/bannerT.png");
+    transform: rotate(180deg);
+}
+
+/* Sol ve Sağ */
+.rune-left,
+.rune-right {
+    top: -10px;
+    /* Dikeyde birleştir */
+    bottom: -10px;
+    width: 110px;
+    background-size: 100% 100%;
+}
+
+/* Sol banner dışarı itildi */
+.rune-left {
+    left: -90px;
+    background-image: url("/bannerR.png");
+    transform: rotate(180deg);
+}
+
+/* Sağ banner dışarı itildi */
+.rune-right {
+    right: -90px;
+    background-image: url("/bannerR.png");
+    transform: none;
+}
+
+
+
+@keyframes rune-glitch-1 {
+    0% {
+        transform: translate3d(0, 0, 0) skewX(0deg)
+    }
+
+    8% {
+        transform: translate3d(-2px, 1px, 0) skewX(-1deg)
+    }
+
+    16% {
+        transform: translate3d(1px, -1px, 0) skewX(1deg)
+    }
+
+    28% {
+        transform: translate3d(-1px, 0, 0) skewX(-0.6deg)
+    }
+
+    40% {
+        transform: translate3d(0, 0, 0) skewX(0deg)
+    }
+
+    60% {
+        transform: translate3d(1px, 0, 0) skewX(0.3deg)
+    }
+
+    72% {
+        transform: translate3d(-2px, 2px, 0) skewX(-1.2deg)
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0) skewX(0deg)
+    }
+}
+
+@keyframes rune-glitch-2 {
+    0% {
+        transform: translate3d(0, 0, 0)
+    }
+
+    10% {
+        transform: translate3d(0.5px, -0.5px, 0)
+    }
+
+    22% {
+        transform: translate3d(-1px, 1px, 0)
+    }
+
+    35% {
+        transform: translate3d(0.8px, 0, 0)
+    }
+
+    58% {
+        transform: translate3d(-0.6px, 0.6px, 0)
+    }
+
+    85% {
+        transform: translate3d(0, 0, 0)
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0)
+    }
+}
+
+@keyframes rune-flicker {
+    0% {
+        opacity: 0.06
+    }
+
+    5% {
+        opacity: 0.12
+    }
+
+    7% {
+        opacity: 0.04
+    }
+
+    12% {
+        opacity: 0.14
+    }
+
+    18% {
+        opacity: 0.08
+    }
+
+    30% {
+        opacity: 0.06
+    }
+
+    55% {
+        opacity: 0.10
+    }
+
+    72% {
+        opacity: 0.05
+    }
+
+    100% {
+        opacity: 0.06
+    }
 }
 
 /* Kartlar cam gibi dursun ama her kartın arkasında ayrı ışık patlaması olmasın */
@@ -440,7 +610,8 @@ body::before {
 
 .card-img {
     width: 100%;
-    height: 190px;
+    aspect-ratio: 1 / 1;
+    /* Kare format */
     flex-shrink: 0;
     border-radius: 14px;
     object-fit: cover;
@@ -451,6 +622,8 @@ body::before {
     box-shadow:
         inset 0 0 0 1px rgba(255, 255, 255, 0.08),
         0 16px 30px rgba(0, 0, 0, 0.55);
+    position: relative;
+    z-index: 5;
 }
 
 .card-content {
@@ -459,7 +632,8 @@ body::before {
     gap: 10px;
     padding-top: 0;
     position: relative;
-    z-index: 1;
+    z-index: 6;
+    /* içerik runelerin üstünde kalsın */
 }
 
 .card:hover,
@@ -468,8 +642,8 @@ body::before {
     border-color: rgba(255, 255, 255, 0.16);
     box-shadow:
         0 16px 40px rgba(0, 0, 0, 0.82),
-    0 0 0 1px rgba(136, 0, 27, 0.34),
-    0 0 34px rgba(136, 0, 27, 0.28);
+        0 0 0 1px rgba(136, 0, 27, 0.34),
+        0 0 34px rgba(136, 0, 27, 0.28);
 }
 
 .card h2 {
@@ -507,7 +681,7 @@ body::before {
 
     .card-img {
         width: 100%;
-        height: 210px;
+        /* height kaldırıldı, aspect-ratio kullanılıyor */
     }
 
     .card h2 {
@@ -578,7 +752,7 @@ body::before {
     z-index: 0;
 }
 
-.modal > * {
+.modal>* {
     position: relative;
     z-index: 1;
 }
@@ -618,3 +792,5 @@ body::before {
         padding: 34px 34px;
     }
 }
+
+/* Yeni: dört taraf için banner-ruinler */
