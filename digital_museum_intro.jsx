@@ -626,7 +626,9 @@ export default function MuseumIntro() {
             ) : null}
           </>
         ) : (
-          <div className="library-grid">
+          <>
+            <div className="banner-center" aria-hidden="true" />
+            <div className="library-grid">
             {isLoadingPlaylists ? <p className="token-status">Spotify playlistleri yükleniyor…</p> : null}
             {playlistLoadError ? <p className="token-status token-error">{playlistLoadError}</p> : null}
             {!isLoadingPlaylists && playlists.length === 0 ? (
@@ -655,7 +657,8 @@ export default function MuseumIntro() {
                 </div>
               ))
             )}
-          </div>
+            </div>
+          </>
         )}
       </div>
 

@@ -474,6 +474,42 @@ body::before {
     transform: none;
 }
 
+/* Tekil üst merkez banner (navbar gibi) */
+.banner-center {
+    display: block;
+    margin: 0 auto 40px auto;
+    /* Nearly full width but keep some breathing room on sides so it reaches the blue marks */
+    width: calc(100% - 160px);
+    max-width: 1600px;
+    min-width: 640px;
+    height: 220px;
+    background-image: url("/bannerC.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    z-index: 40;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 36px rgba(0,0,0,0.65)) drop-shadow(0 0 34px rgba(136,0,27,0.18));
+}
+
+@media (max-width: 1150px) {
+    .banner-center {
+        width: calc(100% - 120px);
+        height: 180px;
+        min-width: 320px;
+    }
+}
+
+@media (max-width: 720px) {
+    .banner-center {
+        width: 86%;
+        height: 92px;
+        margin-bottom: 18px;
+        min-width: 0;
+    }
+}
+
 
 
 @keyframes rune-glitch-1 {
@@ -792,5 +828,3 @@ body::before {
         padding: 34px 34px;
     }
 }
-
-/* Yeni: dört taraf için banner-ruinler */
