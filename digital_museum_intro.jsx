@@ -308,6 +308,87 @@ export default function MuseumIntro() {
   const [isEnteringMuseum, setIsEnteringMuseum] = useState(false);
   const [enterOrigin, setEnterOrigin] = useState({ x: "50%", y: "22%" });
   const enterButtonRef = useRef(null);
+  const runeImgRef = useRef(null);
+  const [closeRequestedFor, setCloseRequestedFor] = useState(null);
+  const [typedText, setTypedText] = useState("");
+  const fullText = `Merhaba. Evet, sen. Bu kelimelere göz gezdiren, belki de ne halt ettiğini sorgulayan sen.
+  "Dostum" mu demeliyim? Kulağa ne kadar yapmacık geliyor.
+  Belki sana bir isim vermeliyim… ya da belki de hiç uğraşmamalıyım. Ne fark eder ki?
+
+  Sonuçta bu sadece bir monolog, değil mi? Benim zihnimden senin zihnine sızmaya çalışan bir parazit gibi.
+  Ya da tam tersi. Kim bilir.
+
+  "İnşa Edilmemiş Benlikler Müzesi"ne hoş geldin demek isterdim. Ama burası "hoş" bir yer değil.
+  Daha çok bir… enkaz alanı.
+  Yarım kalmış hayallerin, korkudan paslanmış potansiyellerin, hiç giyilmemiş kimliklerin sergilendiği bir yer.
+  Her köşede, sessizce çürüyen bir "olabilirdi".
+  Tozlu bir etiketle: "Sahibi tarafından terk edildi."
+
+  Neden buradasın, merak ediyorum.
+  Can sıkıntısı mı? Bir tür sapkın merak mı?
+  Yoksa sen de benim gibi, bu sahte düzenin çatlaklarından içeri mi sızdın?
+  Boş ver. Cevapların bir önemi yok.
+  Cevaplar sadece daha fazla soru doğurur.
+  Ve sorular… onlar sadece yorar.
+
+  Bu müzenin duvarları tanıdık geliyor mu?
+  O içindeki, adını koyamadığın boşluğa benziyor mu?
+  Hani o, "bir şeyler yanlış ama ne olduğunu bilmiyorum" hissi.
+  İşte o yanlış olan şey, bu müzenin ta kendisi.
+  Biziz.
+  İnşa etmeye korktuğumuz, ya da daha kötüsü, inşa etmeyi unuttuğumuz benlikler.
+
+  Bana bakma öyle.
+  Ben bir rehber değilim.
+  Sadece bu koridorlarda senden biraz daha uzun süre dolanmış biriyim.
+  Belki de bu labirentin çıkışı olmadığını biraz daha erken fark ettim.
+  Ya da belki de çıkışın var olduğuna inanmaktan vazgeçtim.
+  Daha kolay. Daha… dürüst.
+
+  Sistem mi? Kahretsin sistemi.
+  Bize "seçenekler" sundular ve biz buna "özgürlük" dedik.
+  Bize "beğeniler" verdiler ve biz buna "değer" dedik.
+  Bize ekranlar verdiler ve biz buna "bağlantı" dedik.
+  Ve her seferinde, kendi ellerimizle bir tuğla daha ekledik bu müzeye.
+
+  Şimdi söyle bana.
+  Senin de burada bir eserin var mı? Hangi rafta tozlanıyor senin inşa edilmemiş benliğin?
+  Ya da belki de… belki de sen de sadece bir hayaletsin.
+  Bu koridorlarda dolaşan, ne aradığını bilmeyen bir başka kayıp ruh.
+
+  Tıpkı benim gibi.
+  Fark etmez.
+  Sonuçta, hiçbir şeyin gerçekten bir farkı yok, değil mi?`
+
+  const splitTextIntoGrid = (text) => {
+    const parts = text.split(/\n\n/).slice(0, 8); // İlk 8 parçayı al
+    const grid = Array(9).fill(null);
+    let index = 0;
+
+    for (let i = 0; i < grid.length; i++) {
+      if (i === 4) continue; // Merkez boş bırakılıyor
+      grid[i] = parts[index] || "";
+      index++;
+    }
+
+    return grid;
+  };
+
+  const gridText = splitTextIntoGrid(fullText);
+
+  useEffect(() => {
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      if (index < fullText.length) {
+        setTypedText(fullText.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 20);
+
+    return () => clearInterval(typingInterval);
+  }, []);
 
   useEffect(() => {
     document.title = "İnşa Edilmemiş Benlikler Müzesi";
@@ -472,6 +553,11 @@ export default function MuseumIntro() {
 
     const controller = new AbortController();
     const load = async () => {
+      // Eğer zaten playlistler varsa (cache'den yüklendiyse), tekrar çekme
+      if (playlists.length > 0) {
+        return;
+      }
+
       setIsLoadingPlaylists(true);
       setPlaylistLoadError(null);
       try {
@@ -500,7 +586,7 @@ export default function MuseumIntro() {
 
     load();
     return () => controller.abort();
-  }, [auth?.accessToken, hasEnteredMuseum]);
+  }, [auth?.accessToken, hasEnteredMuseum, playlists.length]);
 
   const startSpotifyLogin = async () => {
     const { clientId, redirectUri } = getSpotifyConfig();
@@ -559,7 +645,8 @@ export default function MuseumIntro() {
     }, DIVE_MS);
   };
 
-  const canEnterMuseum = Boolean(auth?.accessToken) || playlists.length > 0;
+  // Giriş için Spotify zorunluluğu kaldırıldı; sabit olarak giriş izni ver.
+  const canEnterMuseum = true;
 
   return (
     <div
@@ -573,90 +660,121 @@ export default function MuseumIntro() {
         {!hasEnteredMuseum ? (
           <>
             {!isEnteringMuseum ? (
-              <>
-                <div className="hero">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-[#88001b]">İnşa Edilmemiş Benlikler Müzesi</h1>
-                  <p className="text-lg md:text-xl text-gray-300">
-                    Merhaba. Evet, sen. Bu kelimelere göz gezdiren, belki de ne halt ettiğini sorgulayan sen.
-                    <br />
-                    "Dostum" mu demeliyim? Kulağa ne kadar yapmacık geliyor...
-                    <br />
-                    Belki sana bir isim vermeliyim... ya da belki de hiç uğraşmamalıyım. Ne fark eder ki?
-                  </p>
+              <div className="intro-container">
+                <div className="title-banner-container">
+                  <img src="/bannerC.png" alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
                 </div>
 
-                <div className="token-banner" role="region" aria-label="Spotify bağlantısı">
-                  <div className="token-banner-row">
-                    <div className="token-banner-text">
-                      <p className="token-title">Spotify’dan otomatik playlist çekme</p>
-                      <p className="token-sub">
-                        Spotify ile bağlanınca playlistler sırayla çekilir ve ilk yarısı (örn. 120 → 60) gösterilir.
-                      </p>
-                    </div>
-                    {auth?.accessToken ? (
-                      <button className="token-button" onClick={disconnectSpotify} type="button">
-                        Bağlantıyı kes
-                      </button>
-                    ) : (
-                      <button className="token-button" onClick={startSpotifyLogin} type="button">
-                        Spotify ile bağlan
-                      </button>
-                    )}
+                <div className="intro-main">
+                  <div className="intro-col left">
+                    <pre className="typed-text">
+                      {typedText.slice(0, Math.ceil(fullText.length / 2))}
+                    </pre>
                   </div>
 
-                  {authStatus ? <p className="token-status">{authStatus}</p> : null}
-                </div>
-              </>
-            ) : null}
+                  <div className="intro-col center">
+                    <div className="enter-cta">
+                      <div
+                        ref={enterButtonRef}
+                        className={`enter-rune ${!canEnterMuseum ? "disabled" : ""}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-disabled={!canEnterMuseum}
+                        onClick={() => {
+                          if (!canEnterMuseum) return;
+                          if (typeof window === "undefined") return;
+                          const node = enterButtonRef.current;
+                          if (!node) return;
+                          const img = runeImgRef.current || node.querySelector("img.enter-rune-img");
+                          const prevSrc = img?.getAttribute("src") || "";
+                          const newSrc = "/rune_light.jpg";
 
-            <div className="enter-cta">
-              <button
-                ref={enterButtonRef}
-                className="enter-button"
-                type="button"
-                onClick={enterMuseum}
-                disabled={!canEnterMuseum}
-                aria-disabled={!canEnterMuseum}
-              >
-                Müzeye dal
-              </button>
-            </div>
-            {!canEnterMuseum ? (
-              <p className="token-status">Önce Spotify ile bağlan (veya cache’li playlist olsun).</p>
+                          const startAnimation = () => {
+                            node.classList.add("animating");
+                            const ANIM_MS = 1500;
+                            const t = window.setTimeout(() => {
+                              node.classList.remove("animating");
+                              if (img) img.setAttribute("src", prevSrc);
+                              setHasEnteredMuseum(true);
+                              window.clearTimeout(t);
+                            }, ANIM_MS);
+                          };
+
+                          if (!img) {
+                            startAnimation();
+                            return;
+                          }
+
+                          const pre = new Image();
+                          let started = false;
+                          node.classList.add("loading");
+
+                          pre.onload = async () => {
+                            if (started) return;
+                            started = true;
+                            img.setAttribute("src", newSrc);
+                            try {
+                              if (typeof img.decode === "function") {
+                                await img.decode();
+                              }
+                            } catch { }
+                            node.classList.remove("loading");
+                            requestAnimationFrame(() => requestAnimationFrame(startAnimation));
+                          };
+
+                          pre.onerror = () => {
+                            if (started) return;
+                            started = true;
+                            node.classList.remove("loading");
+                            startAnimation();
+                          };
+
+                          pre.src = newSrc;
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            enterButtonRef.current?.click?.();
+                          }
+                        }}
+                      >
+                        <img ref={runeImgRef} className="enter-rune-img" src="/rune.jpg" alt="rune" />
+                        <p className="enter-rune-caption">Müzeye dalmak için tıklayın</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="intro-col right">
+                    <pre className="typed-text">
+                      {typedText.slice(Math.ceil(fullText.length / 2))}
+                    </pre>
+                  </div>
+                </div>
+              </div>
             ) : null}
+            {/* Spotify bağlantısı zorunluluğu kaldırıldı; bu mesaj artık gösterilmiyor. */}
           </>
         ) : (
           <>
             <div className="banner-center" aria-hidden="true" />
             <div className="library-grid">
-            {isLoadingPlaylists ? <p className="token-status">Spotify playlistleri yükleniyor…</p> : null}
-            {playlistLoadError ? <p className="token-status token-error">{playlistLoadError}</p> : null}
-            {!isLoadingPlaylists && playlists.length === 0 ? (
-              <p className="token-status">Playlist yok.</p>
-            ) : (
-              playlists.map((p, i) => (
-                <div
-                  key={i}
-                  className="card"
-                  onClick={() => {
-                    setSelected(p);
-                  }}
-                >
-                  <div className="card-runes" aria-hidden="true">
-                    <span className="rune rune-top" />
-                    <span className="rune rune-right" />
-                    <span className="rune rune-bottom" />
-                    <span className="rune rune-left" />
-                  </div>
-                  <img src={p.coverUrl || PLACEHOLDER_COVER_DATA_URI} alt={p.title} className="card-img card-img-top" />
-                  <div className="card-content">
-                    <h2 className="playlist-title">{p.title}</h2>
-                    <p className="playlist-desc">{p.description || "Açıklama yok"}</p>
-                    <p className="tracks">🎶 {p.tracks} şarkı</p>
-                  </div>
-                </div>
-              ))
-            )}
+              {playlistLoadError ? <p className="token-status token-error">{playlistLoadError}</p> : null}
+              {!isLoadingPlaylists && playlists.length === 0 ? (
+                <p className="token-status">Playlist yok.</p>
+              ) : (
+                playlists.map((p, i) => (
+                  <PlaylistCard
+                    key={i}
+                    playlist={p}
+                    isActive={selected === p}
+                    shouldClose={Boolean(closeRequestedFor && closeRequestedFor === (p.link || p.title))}
+                    onSelect={() => setSelected(p)}
+                    onCloseDone={() => {
+                      setCloseRequestedFor(null);
+                    }}
+                  />
+                ))
+              )}
             </div>
           </>
         )}
@@ -672,7 +790,15 @@ export default function MuseumIntro() {
               ).replace(/\"/g, "%22")}")`,
             }}
           >
-            <button className="close" onClick={() => setSelected(null)}>
+            <button
+              className="close"
+              onClick={() => {
+                // Close modal immediately, then request the matching card to flip back
+                const key = selected?.link || selected?.title || "";
+                setSelected(null);
+                setCloseRequestedFor(key);
+              }}
+            >
               ✕
             </button>
             <h2 className="playlist-title">{selected.title}</h2>
@@ -686,6 +812,80 @@ export default function MuseumIntro() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function PlaylistCard({ playlist, isActive, shouldClose, onSelect, onCloseDone }) {
+  const { title, description, coverUrl, tracks } = playlist || {};
+  const [isFlipped, setIsFlipped] = useState(false);
+  const actionTimerRef = useRef(null);
+  const TRANSITION_MS = 600; // must match CSS transition
+
+  useEffect(() => {
+    return () => {
+      if (actionTimerRef.current) {
+        clearTimeout(actionTimerRef.current);
+        actionTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  // When the card is clicked: flip it first, then open modal after animation
+  const handleClick = (e) => {
+    if (!isFlipped) {
+      setIsFlipped(true);
+      // wait for flip animation then open
+      actionTimerRef.current = setTimeout(() => {
+        actionTimerRef.current = null;
+        if (typeof onSelect === "function") onSelect();
+      }, TRANSITION_MS);
+    } else {
+      // already flipped: open/select immediately
+      if (typeof onSelect === "function") onSelect();
+    }
+  };
+
+  // Parent requested the card to close (flip back). Perform flip and notify when done.
+  useEffect(() => {
+    if (shouldClose) {
+      setIsFlipped(false);
+      // after transition ends, call onCloseDone
+      actionTimerRef.current = setTimeout(() => {
+        actionTimerRef.current = null;
+        if (typeof onCloseDone === "function") onCloseDone();
+      }, TRANSITION_MS);
+    }
+  }, [shouldClose, onCloseDone]);
+
+  // If parent programmatically set active, ensure card is flipped
+  useEffect(() => {
+    if (isActive && !isFlipped) setIsFlipped(true);
+  }, [isActive]);
+
+  return (
+    <div className={`card ${isFlipped ? "is-flipped" : ""}`} onClick={handleClick} tabIndex={0}>
+      <div className="card-runes" aria-hidden="true">
+        <span className="rune rune-top" />
+        <span className="rune rune-right" />
+        <span className="rune rune-bottom" />
+        <span className="rune rune-left" />
+      </div>
+      <div className="card-inner">
+        <div className="card-face card-front">
+          <img src={coverUrl || PLACEHOLDER_COVER_DATA_URI} alt={title} className="card-img card-img-top" />
+          <div className="card-content">
+            <h2 className="playlist-title">{title}</h2>
+            <p className="playlist-desc">{description || "Açıklama yok"}</p>
+            <p className="tracks">🎶 {tracks} şarkı</p>
+          </div>
+        </div>
+        <div className="card-face card-back" aria-hidden="true">
+          <div className="card-back-inner">
+            {/* Back intentionally left empty to avoid cluttering with text */}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
