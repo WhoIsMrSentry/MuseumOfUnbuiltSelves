@@ -51,7 +51,8 @@ function isValidPlaylistShape(p) {
     typeof p.link === "string" &&
     (typeof p.description === "string" || typeof p.description === "undefined") &&
     (typeof p.tracks === "number" || typeof p.tracks === "undefined") &&
-    (typeof p.coverUrl === "string" || typeof p.coverUrl === "undefined")
+    (typeof p.coverUrl === "string" || typeof p.coverUrl === "undefined") &&
+    ((typeof p.topArtist === "string") || (typeof p.artist === "string") || typeof p.topArtist === "undefined")
   );
 }
 
@@ -62,7 +63,10 @@ function getCachedPlaylists() {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return null;
-    const cleaned = parsed.filter(isValidPlaylistShape);
+    const cleaned = parsed.filter(isValidPlaylistShape).map(p => ({
+      ...p,
+      topArtist: p.topArtist ?? p.artist ?? "",
+    }));
     return cleaned.length > 0 ? cleaned : null;
   } catch {
     return null;
@@ -76,7 +80,10 @@ function setCachedPlaylists(playlists) {
       window.localStorage.removeItem(SPOTIFY_CACHED_PLAYLISTS_KEY);
       return;
     }
-    const cleaned = playlists.filter(isValidPlaylistShape);
+    const cleaned = playlists.filter(isValidPlaylistShape).map(p => ({
+      ...p,
+      topArtist: p.topArtist ?? p.artist ?? "",
+    }));
     window.localStorage.setItem(SPOTIFY_CACHED_PLAYLISTS_KEY, JSON.stringify(cleaned));
   } catch {
     // ignore
@@ -295,6 +302,7 @@ function extractSpotifyPlaylistId(link) {
   }
   return "";
 }
+
 
 export default function MuseumIntro() {
   const [selected, setSelected] = useState(null);
@@ -553,27 +561,36 @@ export default function MuseumIntro() {
 
     const controller = new AbortController();
     const load = async () => {
-      // Eğer zaten playlistler varsa (cache'den yüklendiyse), tekrar çekme
-      if (playlists.length > 0) {
-        return;
-      }
-
       setIsLoadingPlaylists(true);
       setPlaylistLoadError(null);
       try {
-        const { total, items } = await fetchAllMyPlaylistsInOrder(auth.accessToken, controller.signal);
+        const [{ total, items }, localData] = await Promise.all([
+          fetchAllMyPlaylistsInOrder(auth.accessToken, controller.signal),
+          fetch("/playlists.json").then(r => r.ok ? r.json() : []).catch(() => [])
+        ]);
+
         const halfCount = Math.floor(total / 2);
-        const firstHalf = items.slice(0, halfCount).map((p) => ({
-          title: p?.name || "İsimsiz Playlist",
-          description: p?.description || "",
-          tracks: p?.tracks?.total ?? 0,
-          coverUrl: p?.images?.[0]?.url || "",
-          link: p?.external_urls?.spotify || "",
-        }));
+        const playlistItems = items.slice(0, halfCount);
+
+        const firstHalf = playlistItems.map((p) => {
+          const localEntry = localData.find(ld => ld.title === p?.name);
+          return {
+            title: p?.name || "İsimsiz Playlist",
+            description: p?.description || "",
+            tracks: p?.tracks?.total ?? 0,
+            coverUrl: p?.images?.[0]?.url || "",
+            link: p?.external_urls?.spotify || "",
+            topArtist: localEntry?.artist || "",
+          };
+        });
 
         setPlaylists(firstHalf);
-        // "Son çekilen" listeyi hardcoded fallback gibi sakla.
         setCachedPlaylists(firstHalf);
+
+        // Konsola JSON formatında yazdır (Kullanıcının kopyalaması için)
+        console.log("--- PLAYLISTS JSON BAŞLANGIÇ ---");
+        console.log(JSON.stringify(firstHalf.map(p => ({ title: p.title, artist: "" })), null, 2));
+        console.log("--- PLAYLISTS JSON BİTİŞ ---");
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Spotify playlistleri alınamadı.";
         setPlaylistLoadError(msg);
@@ -877,7 +894,14 @@ function PlaylistCard({ playlist, isActive, shouldClose, onSelect, onCloseDone }
           <div className="card-content">
             <h2 className="playlist-title">{title}</h2>
             <p className="playlist-desc">{description || "Açıklama yok"}</p>
-            <p className="tracks">🎶 {tracks} şarkı</p>
+            <div className="card-footer">
+              <p className="tracks">{tracks} şarkı</p>
+              {(playlist.topArtist || playlist.artist) && (
+                <div className="artist-tag">
+                  {playlist.topArtist || playlist.artist}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="card-face card-back" aria-hidden="true">
