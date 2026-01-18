@@ -858,16 +858,16 @@ body::before {
 .artist-tag {
     display: inline-flex;
     align-items: center;
-    background: rgba(255, 51, 68, 0.15);
-    border: 1px solid rgba(255, 51, 68, 0.3);
-    color: #ff3344;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 4px 12px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 0 15px rgba(255, 51, 68, 0.1);
+    background: rgba(0, 0, 0, 0.85); /* koyu kutu */
+    border: 2px solid var(--accent); /* kırmızı sınır */
+    color: #fff; /* beyaz sanatçı ismi */
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px; /* hafif radius */
+    text-transform: none;
+    letter-spacing: 0.2px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 18px rgba(255,51,68,0.08);
 }
 
 .tracks {
