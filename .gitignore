@@ -6,3 +6,5 @@ node_modules
 dist
 .cache
 desktop.ini
+playlists.json
+public/playlists.json
