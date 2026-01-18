@@ -14,6 +14,9 @@ export default defineConfig(({ mode }) => {
   const clientId = stripWrappingQuotes(env.VITE_SPOTIFY_CLIENT_ID || '');
   const redirectUri = stripWrappingQuotes(env.VITE_SPOTIFY_REDIRECT_URI || '');
   return {
+    // Base path for GitHub Pages (repository name). Ensures built asset
+    // links include the repo subpath so they don't 404 on GitHub Pages.
+    base: '/MuseumOfUnbuiltSelves/',
     server: {
       host: '127.0.0.1',
       port: 8888,
