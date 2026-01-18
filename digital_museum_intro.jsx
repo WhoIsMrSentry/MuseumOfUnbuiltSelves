@@ -554,7 +554,7 @@ export default function MuseumIntro() {
     }
     if (!auth?.accessToken) {
       // No Spotify auth: try to load local public/playlists.json as a fallback
-      fetch('/playlists.json')
+      fetch(import.meta.env.BASE_URL + 'playlists.json')
         .then(r => (r.ok ? r.json() : []))
         .then(localData => {
           const normalized = Array.isArray(localData)
@@ -587,7 +587,7 @@ export default function MuseumIntro() {
       try {
         const [{ total, items }, localData] = await Promise.all([
           fetchAllMyPlaylistsInOrder(auth.accessToken, controller.signal),
-          fetch("/playlists.json").then(r => r.ok ? r.json() : []).catch(() => [])
+          fetch(import.meta.env.BASE_URL + 'playlists.json').then(r => r.ok ? r.json() : []).catch(() => [])
         ]);
 
         const halfCount = Math.floor(total / 2);
@@ -700,7 +700,7 @@ export default function MuseumIntro() {
             {!isEnteringMuseum ? (
               <div className="intro-container">
                 <div className="title-banner-container">
-                  <img src="/bannerC.png" alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
+                  <img src={import.meta.env.BASE_URL + 'bannerC.png'} alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
                 </div>
 
                 <div className="intro-main">
@@ -725,7 +725,7 @@ export default function MuseumIntro() {
                           if (!node) return;
                           const img = runeImgRef.current || node.querySelector("img.enter-rune-img");
                           const prevSrc = img?.getAttribute("src") || "";
-                          const newSrc = "/rune_light.jpg";
+                          const newSrc = import.meta.env.BASE_URL + 'rune_light.jpg';
 
                           const startAnimation = () => {
                             node.classList.add("animating");
@@ -776,7 +776,7 @@ export default function MuseumIntro() {
                           }
                         }}
                       >
-                        <img ref={runeImgRef} className="enter-rune-img" src="/rune.jpg" alt="rune" />
+                          <img ref={runeImgRef} className="enter-rune-img" src={import.meta.env.BASE_URL + 'rune.jpg'} alt="rune" />
                         <p className="enter-rune-caption">Müzeye dalmak için tıklayın</p>
                       </div>
                     </div>
