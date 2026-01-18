@@ -553,8 +553,29 @@ export default function MuseumIntro() {
       return;
     }
     if (!auth?.accessToken) {
-      setPlaylists(getCachedPlaylists() || []);
-      setPlaylistLoadError(null);
+      // No Spotify auth: try to load local public/playlists.json as a fallback
+      fetch('/playlists.json')
+        .then(r => (r.ok ? r.json() : []))
+        .then(localData => {
+          const normalized = Array.isArray(localData)
+            ? localData.map(p => ({
+                title: p.title || p.name || 'İsimsiz Playlist',
+                description: p.description || '',
+                tracks: typeof p.tracks === 'number' ? p.tracks : 0,
+                coverUrl: p.coverUrl || p.image || (p.images && p.images[0] && p.images[0].url) || '',
+                link: p.link || (p.external_urls && p.external_urls.spotify) || '',
+                topArtist: p.topArtist || p.artist || '',
+              }))
+            : [];
+          const cleaned = normalized.filter(isValidPlaylistShape);
+          setPlaylists(cleaned);
+          setCachedPlaylists(cleaned);
+          setPlaylistLoadError(null);
+        })
+        .catch(() => {
+          setPlaylists(getCachedPlaylists() || []);
+          setPlaylistLoadError(null);
+        });
       return;
     }
     if (typeof fetch !== "function") return;

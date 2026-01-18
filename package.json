@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "fetch-data": "node scripts/fetch-spotify.js",
+    "build": "npm run fetch-data && vite build",
     "preview": "vite preview",
     "test": "jest"
   },
@@ -22,6 +23,7 @@
     "vite": "^7.3.0"
   },
   "dependencies": {
-    "framer-motion": "^12.23.26"
+    "framer-motion": "^12.23.26",
+    "dotenv": "^16.1.4"
   }
 }
