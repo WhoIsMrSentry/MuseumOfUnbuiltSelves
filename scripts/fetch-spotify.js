@@ -96,14 +96,28 @@ async function fetchSpotifyData() {
         const playlistItems = allPlaylists.slice(0, halfCount);
 
         const transformed = playlistItems.map(p => {
-            const localEntry = localData.find(ld => ld.title === p.name);
+            const maybeName = p?.name || "";
+            const localEntry = localData.find(ld => {
+                if (!ld || !ld.title || !maybeName) return false;
+                try {
+                    const a = String(ld.title).trim().toLowerCase();
+                    const b = String(maybeName).trim().toLowerCase();
+                    return a === b || b.includes(a) || a.includes(b);
+                } catch {
+                    return false;
+                }
+            });
+
+            // Prefer explicit local mapping; otherwise fall back to playlist owner display name if available.
+            const fallbackArtist = (p.owner && p.owner.display_name) ? p.owner.display_name : "";
+
             return {
                 title: p.name || "İsimsiz Playlist",
                 description: p.description || "",
                 tracks: p.tracks?.total ?? 0,
                 coverUrl: p.images?.[0]?.url || "",
                 link: p.external_urls?.spotify || "",
-                topArtist: localEntry?.artist || "",
+                topArtist: localEntry?.artist || fallbackArtist || "",
             };
         });
 
