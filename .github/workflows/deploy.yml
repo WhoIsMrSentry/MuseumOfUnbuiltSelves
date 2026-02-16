@@ -38,7 +38,11 @@ jobs:
           SKIP_FETCH=true npm run fetch-data
 
       - name: Build
-        run: npm run build
+        run: |
+          # Ensure fetch-data does not attempt live Spotify API during build
+          # and overwrite the copied local playlists.json. Propagate SKIP_FETCH
+          # so the `npm run build`'s internal `fetch-data` honors the fallback.
+          SKIP_FETCH=true npm run build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
