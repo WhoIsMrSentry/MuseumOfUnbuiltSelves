@@ -108,16 +108,17 @@ async function fetchSpotifyData() {
                 }
             });
 
-            // Prefer explicit local mapping; otherwise fall back to playlist owner display name if available.
-            const fallbackArtist = (p.owner && p.owner.display_name) ? p.owner.display_name : "";
-
             return {
                 title: p.name || "İsimsiz Playlist",
                 description: p.description || "",
                 tracks: p.tracks?.total ?? 0,
                 coverUrl: p.images?.[0]?.url || "",
                 link: p.external_urls?.spotify || "",
-                topArtist: localEntry?.artist || fallbackArtist || "",
+                // Only use explicit local mapping for topArtist. Avoid using
+                // playlist owner display name as a fallback because it often
+                // equals the account that created the playlists and causes the
+                // same name to appear across many cards.
+                topArtist: localEntry?.artist || "",
             };
         });
 
