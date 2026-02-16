@@ -31,7 +31,11 @@ jobs:
       - name: Fetch Spotify data (build-time)
         run: |
           echo "Running fetch-data (will generate public/playlists.json)"
-          npm run fetch-data
+          # If repository secrets are not configured in Actions, fall back to the
+          # local `playlists.json` by exporting SKIP_FETCH=true so the script
+          # copies `playlists.json` into `public/` instead of trying to call
+          # the Spotify API and failing the job.
+          SKIP_FETCH=true npm run fetch-data
 
       - name: Build
         run: npm run build
