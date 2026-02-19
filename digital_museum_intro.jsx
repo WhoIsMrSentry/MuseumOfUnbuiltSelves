@@ -318,7 +318,6 @@ export default function MuseumIntro() {
   const enterButtonRef = useRef(null);
   const runeImgRef = useRef(null);
   const [closeRequestedFor, setCloseRequestedFor] = useState(null);
-  const [audioPromptVisible, setAudioPromptVisible] = useState(false);
   const [typedText, setTypedText] = useState("");
   const fullText = `Merhaba. Evet, sen. Bu kelimelere göz gezdiren, belki de ne halt ettiğini sorgulayan sen.
   "Dostum" mu demeliyim? Kulağa ne kadar yapmacık geliyor.
@@ -719,8 +718,6 @@ export default function MuseumIntro() {
                         role="button"
                         tabIndex={0}
                         aria-disabled={!canEnterMuseum}
-                        onPointerEnter={() => setAudioPromptVisible(true)}
-                        onPointerLeave={() => setAudioPromptVisible(false)}
                         onClick={() => {
                           try { window.dispatchEvent(new Event('start-background-audio')); } catch {};
                           if (!canEnterMuseum) return;
@@ -783,43 +780,7 @@ export default function MuseumIntro() {
                           <img ref={runeImgRef} className="enter-rune-img" src={import.meta.env.BASE_URL + 'rune.jpg'} alt="rune" />
                         <p className="enter-rune-caption">Müzeye dalmak için tıklayın</p>
                       </div>
-                      {audioPromptVisible ? (
-                        <div
-                          className="audio-prompt"
-                          style={{
-                            position: 'absolute',
-                            bottom: '-68px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            background: 'rgba(0,0,0,0.8)',
-                            color: 'white',
-                            padding: '10px 14px',
-                            borderRadius: 8,
-                            fontSize: 13,
-                            zIndex: 1200,
-                            display: 'flex',
-                            gap: 8,
-                            alignItems: 'center',
-                          }}
-                        >
-                          <span>En iyi deneyim için sesi açın</span>
-                          <button
-                            onClick={() => {
-                              setAudioPromptVisible(false);
-                            }}
-                            style={{
-                              background: '#fff',
-                              color: '#000',
-                              border: 'none',
-                              padding: '6px 8px',
-                              borderRadius: 6,
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Sesi aç
-                          </button>
-                        </div>
-                      ) : null}
+                      
                     </div>
                   </div>
 
