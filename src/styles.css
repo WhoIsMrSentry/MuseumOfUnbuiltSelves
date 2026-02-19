@@ -818,6 +818,100 @@ body::before {
     z-index: 5;
 }
 
+/* Mobile / small screens adjustments — preserve desktop by scoping to max-width */
+@media (max-width: 720px) {
+    .intro-container {
+        height: auto; /* don't force full viewport height on small screens */
+        padding: 6vh 4vw;
+        overflow: auto;
+    }
+
+    .intro-main {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+        gap: 4vw;
+        height: auto;
+        max-height: none;
+        align-items: stretch;
+    }
+
+    .intro-col.center {
+        min-width: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .typed-text {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        padding: 12px;
+        max-height: 40vh;
+        overflow: auto;
+    }
+
+    .enter-cta {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 6px 0 0 0;
+    }
+
+    /* Make rune image smaller and responsive */
+    .enter-rune-img {
+        width: 180px;
+        max-width: 60vw;
+        height: auto;
+        display: block;
+    }
+
+    /* Audio prompt should flow beneath the rune on small screens */
+    .audio-prompt {
+        position: static !important;
+        transform: none !important;
+        margin-top: 10px;
+        display: inline-flex;
+    }
+
+    /* Cards should be shorter on mobile so they fit without overflowing */
+    .card {
+        padding: 16px;
+        min-height: 280px;
+    }
+
+    .card-media {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .banner-center {
+        width: 92%;
+        height: 88px;
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 420px) {
+    .title-banner-img {
+        max-height: 120px;
+    }
+
+    .typed-text {
+        font-size: 0.92rem;
+        max-height: 36vh;
+    }
+
+    .enter-rune-img {
+        width: 140px;
+        max-width: 64vw;
+    }
+
+    .card {
+        min-height: 240px;
+        padding: 12px;
+    }
+}
+
 .card-content {
     display: flex;
     flex-direction: column;
