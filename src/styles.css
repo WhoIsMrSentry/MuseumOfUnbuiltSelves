@@ -826,14 +826,15 @@ body::before {
         overflow: auto;
     }
 
+    /* Keep three columns but shrink center column for small screens */
     .intro-main {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 160px 1fr;
         grid-auto-rows: auto;
-        gap: 4vw;
+        gap: 3.5vw;
         height: auto;
         max-height: none;
-        align-items: stretch;
+        align-items: center;
     }
 
     .intro-col.center {
@@ -846,7 +847,7 @@ body::before {
         font-size: 0.95rem;
         line-height: 1.4;
         padding: 12px;
-        max-height: 40vh;
+        max-height: 48vh;
         overflow: auto;
     }
 
@@ -859,24 +860,16 @@ body::before {
 
     /* Make rune image smaller and responsive */
     .enter-rune-img {
-        width: 180px;
-        max-width: 60vw;
+        width: 140px;
+        max-width: 100%;
         height: auto;
         display: block;
-    }
-
-    /* Audio prompt should flow beneath the rune on small screens */
-    .audio-prompt {
-        position: static !important;
-        transform: none !important;
-        margin-top: 10px;
-        display: inline-flex;
     }
 
     /* Cards should be shorter on mobile so they fit without overflowing */
     .card {
         padding: 16px;
-        min-height: 280px;
+        min-height: 260px;
     }
 
     .card-media {
@@ -898,16 +891,16 @@ body::before {
 
     .typed-text {
         font-size: 0.92rem;
-        max-height: 36vh;
+        max-height: 40vh;
     }
 
     .enter-rune-img {
-        width: 140px;
-        max-width: 64vw;
+        width: 120px;
+        max-width: 100%;
     }
 
     .card {
-        min-height: 240px;
+        min-height: 220px;
         padding: 12px;
     }
 }
