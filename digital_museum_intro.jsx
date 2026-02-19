@@ -802,29 +802,18 @@ export default function MuseumIntro() {
               {!isLoadingPlaylists && playlists.length === 0 ? (
                 <p className="token-status">Playlist yok.</p>
               ) : (
-                (() => {
-                  // chunk playlists into rows of 3
-                  const rows = [];
-                  for (let i = 0; i < playlists.length; i += 3) {
-                    rows.push(playlists.slice(i, i + 3));
-                  }
-                  return rows.map((row, rowIndex) => (
-                    <div className="playlist-row" key={rowIndex}>
-                      {row.map((p, i) => (
-                        <PlaylistCard
-                          key={`${rowIndex}-${i}`}
-                          playlist={p}
-                          isActive={selected === p}
-                          shouldClose={Boolean(closeRequestedFor && closeRequestedFor === (p.link || p.title))}
-                          onSelect={() => setSelected(p)}
-                          onCloseDone={() => {
-                            setCloseRequestedFor(null);
-                          }}
-                        />
-                      ))}
-                    </div>
-                  ));
-                })()
+                playlists.map((p, i) => (
+                  <PlaylistCard
+                    key={i}
+                    playlist={p}
+                    isActive={selected === p}
+                    shouldClose={Boolean(closeRequestedFor && closeRequestedFor === (p.link || p.title))}
+                    onSelect={() => setSelected(p)}
+                    onCloseDone={() => {
+                      setCloseRequestedFor(null);
+                    }}
+                  />
+                ))
               )}
             </div>
           </>

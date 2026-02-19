@@ -468,21 +468,9 @@ body::before {
     grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-.playlist-row {
-    display: block;
-    margin: 32px 0;
-}
-
-
 @media(min-width:720px) {
     .library-grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
-    .playlist-row {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 80px;
-        align-items: start;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -491,28 +479,6 @@ body::before {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 200px;
         /* Uçların değmesini engellemek için artırıldı */
-    }
-}
-
-/* Mobile: make each playlist-row a horizontal carousel (touch swipe) */
-@media (max-width: 720px) {
-    .library-grid {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
-    .playlist-row {
-        display: flex;
-        gap: 12px;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        padding: 8px 4px;
-    }
-    .playlist-row .card {
-        flex: 0 0 72%; /* main card visible, neighbors peek */
-        min-width: 72%;
-        scroll-snap-align: center;
-        margin: 0;
     }
 }
 
