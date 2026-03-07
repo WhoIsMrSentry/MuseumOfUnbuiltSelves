@@ -80,6 +80,7 @@ body::after {
     flex-direction: column;
     align-items: center;
     overflow: visible;
+    position: relative;
 }
 
 .app.entering .enter-cta {
@@ -290,6 +291,8 @@ body::before {
     z-index: 10;
     overflow: hidden;
     /* Giriş sayfasında scroll yok */
+    position: relative;
+    z-index: 100;
 }
 
 .title-banner-container {
@@ -299,7 +302,9 @@ body::before {
     display: flex;
     justify-content: center;
     align-items: center;
-    filter: drop-shadow(0 0 30px rgba(255, 34, 51, 0.45));
+    position: relative;
+    z-index: 120; /* ensure banner paints above marquee */
+    overflow: hidden;
 }
 
 .title-banner-img {
@@ -340,27 +345,37 @@ body::before {
     min-width: 300px;
 }
 
-.typed-text {
-    color: var(--muted);
-    font-size: clamp(0.65rem, 0.9vw, 0.95rem);
-    line-height: 1.35;
-    white-space: pre-wrap;
-    overflow: hidden;
-    text-align: left;
-    height: 100%;
-    display: block;
-    padding: 14px;
-    margin: 0;
-    background: rgba(136, 0, 27, 0.08);
-    border: 1px solid rgba(136, 0, 27, 0.15);
+.typed-text.glass {
+    background: transparent; /* içerde overlay ::after ile sağlanacak */
     border-radius: 12px;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 0; /* kendi stacking context'i oluşturacak */
+    overflow: hidden;
 }
 
-.typed-text::-webkit-scrollbar {
-    width: 3px;
+/* disable generic .glass::before for typed-text to avoid double overlay */
+.typed-text.glass::before { display: none; }
+
+/* overlay sits between background and text using ::after */
+.typed-text.glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.035);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1; /* above background but below text */
+    pointer-events: none;
 }
 
+.typed-text .typed-inner {
+    position: relative;
+    z-index: 2; /* text above the overlay */
+    color: #fff;
+    padding: 14px;
+    display: block;
+    white-space: pre-wrap;
+}
 .typed-text::-webkit-scrollbar-track {
     background: transparent;
 }
@@ -397,6 +412,143 @@ body::before {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+}
+
+/* Fast.com tarzı hareketli span (marquee) */
+.marquee-wrap {
+    position: absolute;
+    top: 20%;
+    width: 100vw;
+    pointer-events: none;
+    z-index: 60; /* below banner frost/image, above page background */
+}
+
+.marquee-wrap:nth-child(even) {
+    right: -20%;
+    transform: rotate(45deg);
+}
+
+.marquee-wrap:nth-child(odd) {
+    left: -20%;
+    right: initial;
+    transform: rotate(-45deg);
+}
+
+.marquee-text-track {
+    animation: marquee 80s linear infinite;
+    color: transparent;
+    display: flex;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 7vw;
+    font-style: normal;
+    font-weight: 700;
+    gap: 0;
+    line-height: normal;
+    -webkit-text-stroke-color: rgba(255,255,255,0.85);
+    -webkit-text-stroke-width: 2px;
+    text-transform: uppercase;
+    width: max-content;
+}
+
+.marquee-text-track span {
+    margin-right: 2vw;
+    color: transparent;
+    -webkit-text-stroke-color: rgba(255,255,255,0.9);
+}
+
+.marquee-text {
+    overflow: clip;
+}
+
+@keyframes marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Cam efekti: başlık ve yazı kutuları için */
+.glass {
+    position: relative;
+}
+
+.glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.04);
+    border-radius: inherit;
+    border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+    z-index: 2; /* overlay katmanı */
+}
+
+/* Başlık için container cam efekti */
+.title-banner-container.glass {
+    position: relative;
+}
+
+.title-banner-frost {
+    position: absolute;
+    inset: 0;
+    z-index: 121;
+    background: rgba(255, 255, 255, 0.025);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    will-change: backdrop-filter;
+    pointer-events: none;
+}
+
+.title-banner-container.glass img {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 122; /* resim overlay'in üstünde olacak */
+    transform: none;
+    filter: drop-shadow(0 0 30px rgba(255, 34, 51, 0.45));
+}
+
+.title-banner-container.glass::before,
+.title-banner-container.glass::after {
+    display: none;
+}
+
+/* Ensure banner image remains sharp; marquee will blur under the overlay */
+.title-banner-container.glass img {
+    filter: none !important;
+    transform: none !important;
+}
+
+/* Center logo (rune) frosted glass wrapper */
+.rune-glass {
+    display: inline-block;
+    position: relative;
+    border-radius: 9999px;
+    padding: 12px; /* daha belirgin cam halkası için padding artırıldı */
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.02);
+}
+
+.rune-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(255,255,255,0.035);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1; /* behind the img */
+    pointer-events: none;
+}
+
+.rune-glass img.enter-rune-img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    border-radius: 9999px;
 }
 
 .token-banner-text {
@@ -904,6 +1056,29 @@ body::before {
         padding: 12px;
     }
 }
+
+/* Orientation gate overlay for portrait on mobile */
+.orientation-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.96);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+}
+.orientation-overlay .orientation-inner {
+    max-width: 560px;
+}
+.orientation-overlay h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.25rem;
+}
+.orientation-overlay p { margin: 6px 0; opacity: 0.92; }
+.orientation-overlay .small-muted { opacity: 0.7; font-size: 0.9rem; }
 
 .card-content {
     display: flex;

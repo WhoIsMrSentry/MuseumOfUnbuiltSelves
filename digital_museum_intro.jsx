@@ -319,6 +319,8 @@ export default function MuseumIntro() {
   const runeImgRef = useRef(null);
   const [closeRequestedFor, setCloseRequestedFor] = useState(null);
   const [typedText, setTypedText] = useState("");
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(true);
   const fullText = `Merhaba. Evet, sen. Bu kelimelere göz gezdiren, belki de ne halt ettiğini sorgulayan sen.
   "Dostum" mu demeliyim? Kulağa ne kadar yapmacık geliyor.
   Belki sana bir isim vermeliyim… ya da belki de hiç uğraşmamalıyım. Ne fark eder ki?
@@ -396,6 +398,23 @@ export default function MuseumIntro() {
     }, 20);
 
     return () => clearInterval(typingInterval);
+    if (typeof window === 'undefined') return;
+    const checkOrientation = () => {
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
+      const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      const mobileUa = /Mobi|Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+      const mobile = isTouch || mobileUa;
+      const landscape = window.matchMedia ? window.matchMedia('(orientation: landscape)').matches : window.innerWidth > window.innerHeight;
+      setIsMobileDevice(mobile && Math.min(window.innerWidth, window.innerHeight) < 900);
+      setIsLandscape(Boolean(landscape));
+    };
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
   }, []);
 
   useEffect(() => {
@@ -692,21 +711,63 @@ export default function MuseumIntro() {
       data-light={lightMode}
       style={{ "--enter-x": enterOrigin.x, "--enter-y": enterOrigin.y }}
     >
+      {isMobileDevice && !isLandscape ? (
+        <div className="orientation-overlay" role="dialog" aria-modal="true">
+          <div className="orientation-inner">
+            <h2>Lütfen cihazınızı yatay çevirin</h2>
+            <p>Bu site en iyi yatay (landscape) modda görüntülenir. Lütfen ekranı yatırın veya masaüstünden açın.</p>
+            <p className="small-muted">Cihazı yatay moda çevirdiğinizde site otomatik açılacaktır.</p>
+          </div>
+        </div>
+      ) : null}
       {isEnteringMuseum ? <div className="enter-overlay" aria-hidden="true" /> : null}
 
       <div className="scene">
+            {!hasEnteredMuseum ? (
+              <>
+                <div className="marquee-wrap" style={{ display: "block" }}>
+                  <div className="marquee-text">
+                    <div className="marquee-text-track">
+                      <span>İnşa</span>
+                      <span>Edilmemiş</span>
+                      <span>Benlikler</span>
+                      <span>Müzesi</span>
+                      <span>İnşa</span>
+                      <span>Edilmemiş</span>
+                      <span>Benlikler</span>
+                      <span>Müzesi</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="marquee-wrap" style={{ display: "block" }}>
+                  <div className="marquee-text">
+                    <div className="marquee-text-track">
+                      <span>İnşa</span>
+                      <span>Edilmemiş</span>
+                      <span>Benlikler</span>
+                      <span>Müzesi</span>
+                      <span>İnşa</span>
+                      <span>Edilmemiş</span>
+                      <span>Benlikler</span>
+                      <span>Müzesi</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : null}
         {!hasEnteredMuseum ? (
           <>
             {!isEnteringMuseum ? (
               <div className="intro-container">
-                <div className="title-banner-container">
+                <div className="title-banner-container glass">
+                  <div className="title-banner-frost" aria-hidden="true" />
                   <img src={import.meta.env.BASE_URL + 'bannerC.png'} alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
                 </div>
 
                 <div className="intro-main">
                   <div className="intro-col left">
-                    <pre className="typed-text">
-                      {typedText.slice(0, Math.ceil(fullText.length / 2))}
+                    <pre className="typed-text glass">
+                      <span className="typed-inner">{typedText.slice(0, Math.ceil(fullText.length / 2))}</span>
                     </pre>
                   </div>
 
@@ -777,7 +838,9 @@ export default function MuseumIntro() {
                           }
                         }}
                       >
-                          <img ref={runeImgRef} className="enter-rune-img" src={import.meta.env.BASE_URL + 'rune.jpg'} alt="rune" />
+                          <div className="rune-glass">
+                            <img ref={runeImgRef} className="enter-rune-img" src={import.meta.env.BASE_URL + 'rune.jpg'} alt="rune" />
+                          </div>
                         <p className="enter-rune-caption">Müzeye dalmak için tıklayın</p>
                       </div>
                       
@@ -785,8 +848,8 @@ export default function MuseumIntro() {
                   </div>
 
                   <div className="intro-col right">
-                    <pre className="typed-text">
-                      {typedText.slice(Math.ceil(fullText.length / 2))}
+                    <pre className="typed-text glass">
+                      <span className="typed-inner">{typedText.slice(Math.ceil(fullText.length / 2))}</span>
                     </pre>
                   </div>
                 </div>
