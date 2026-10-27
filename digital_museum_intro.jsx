@@ -7,6 +7,10 @@ const SPOTIFY_PKCE_STORAGE_KEY = "digitalMuseum.spotifyPkce";
 const SPOTIFY_CACHED_PLAYLISTS_KEY = "digitalMuseum.cachedPlaylists";
 
 const SPOTIFY_SCOPES = ["playlist-read-private", "playlist-read-collaborative"];
+const BASE_URL =
+  typeof globalThis !== "undefined" && typeof globalThis.__BASE_URL__ === "string"
+    ? globalThis.__BASE_URL__
+    : "/";
 
 const PLACEHOLDER_COVER_DATA_URI =
   "data:image/svg+xml;utf8," +
@@ -565,7 +569,7 @@ export default function MuseumIntro() {
   }, [auth?.refreshToken, auth?.expiresAt]);
 
   useEffect(() => {
-    // Spotify hesabındaki playlistleri sırayla çek; ilk yarısını al.
+    // Spotify hesabındaki tüm playlistleri sırayla çek.
     if (!hasEnteredMuseum) {
       setIsLoadingPlaylists(false);
       setPlaylistLoadError(null);
@@ -573,7 +577,7 @@ export default function MuseumIntro() {
     }
     if (!auth?.accessToken) {
       // No Spotify auth: try to load local public/playlists.json as a fallback
-      fetch(import.meta.env.BASE_URL + 'playlists.json')
+      fetch(BASE_URL + 'playlists.json')
         .then(r => (r.ok ? r.json() : []))
         .then(localData => {
           const normalized = Array.isArray(localData)
@@ -604,15 +608,12 @@ export default function MuseumIntro() {
       setIsLoadingPlaylists(true);
       setPlaylistLoadError(null);
       try {
-        const [{ total, items }, localData] = await Promise.all([
+        const [{ items }, localData] = await Promise.all([
           fetchAllMyPlaylistsInOrder(auth.accessToken, controller.signal),
-          fetch(import.meta.env.BASE_URL + 'playlists.json').then(r => r.ok ? r.json() : []).catch(() => [])
+          fetch(BASE_URL + 'playlists.json').then(r => r.ok ? r.json() : []).catch(() => [])
         ]);
 
-        const halfCount = Math.floor(total / 2);
-        const playlistItems = items.slice(0, halfCount);
-
-        const firstHalf = playlistItems.map((p) => {
+        const allPlaylists = items.map((p) => {
           const localEntry = localData.find(ld => ld.title === p?.name);
           return {
             title: p?.name || "İsimsiz Playlist",
@@ -620,16 +621,16 @@ export default function MuseumIntro() {
             tracks: p?.tracks?.total ?? 0,
             coverUrl: p?.images?.[0]?.url || "",
             link: p?.external_urls?.spotify || "",
-            topArtist: localEntry?.artist || "",
+            topArtist: localEntry?.topArtist || localEntry?.artist || "",
           };
         });
 
-        setPlaylists(firstHalf);
-        setCachedPlaylists(firstHalf);
+        setPlaylists(allPlaylists);
+        setCachedPlaylists(allPlaylists);
 
         // Konsola JSON formatında yazdır (Kullanıcının kopyalaması için)
         console.log("--- PLAYLISTS JSON BAŞLANGIÇ ---");
-        console.log(JSON.stringify(firstHalf.map(p => ({ title: p.title, artist: "" })), null, 2));
+        console.log(JSON.stringify(allPlaylists.map(p => ({ title: p.title, artist: "" })), null, 2));
         console.log("--- PLAYLISTS JSON BİTİŞ ---");
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Spotify playlistleri alınamadı.";
@@ -761,7 +762,7 @@ export default function MuseumIntro() {
               <div className="intro-container">
                 <div className="title-banner-container glass">
                   <div className="title-banner-frost" aria-hidden="true" />
-                  <img src={import.meta.env.BASE_URL + 'bannerC.png'} alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
+                  <img src={BASE_URL + 'bannerC.png'} alt="İnşa Edilmemiş Benlikler Müzesi" className="title-banner-img" />
                 </div>
 
                 <div className="intro-main">
@@ -787,7 +788,7 @@ export default function MuseumIntro() {
                           if (!node) return;
                           const img = runeImgRef.current || node.querySelector("img.enter-rune-img");
                           const prevSrc = img?.getAttribute("src") || "";
-                          const newSrc = import.meta.env.BASE_URL + 'rune_light.jpg';
+                          const newSrc = BASE_URL + 'rune_light.jpg';
 
                           const startAnimation = () => {
                             node.classList.add("animating");
@@ -839,7 +840,7 @@ export default function MuseumIntro() {
                         }}
                       >
                           <div className="rune-glass">
-                            <img ref={runeImgRef} className="enter-rune-img" src={import.meta.env.BASE_URL + 'rune.jpg'} alt="rune" />
+                            <img ref={runeImgRef} className="enter-rune-img" src={BASE_URL + 'rune.jpg'} alt="rune" />
                           </div>
                         <p className="enter-rune-caption">Müzeye dalmak için tıklayın</p>
                       </div>

@@ -2,6 +2,41 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+async function findTopArtist(playlist, accessToken) {
+    const playlistUrl = playlist?.external_urls?.spotify || '';
+    const playlistId = playlistUrl.split('/playlist/')[1]?.split('?')[0];
+    if (!playlistId) return '';
+
+    const artistCounts = new Map();
+    let url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
+
+    try {
+        while (url) {
+            const res = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${accessToken}` },
+            });
+            if (!res.ok) {
+                console.warn(`Could not fetch tracks for playlist ${playlistId}: ${res.status}`);
+                return '';
+            }
+            const data = await res.json();
+            for (const item of data.items || []) {
+                for (const artist of item.track?.artists || []) {
+                    if (artist?.name) {
+                        artistCounts.set(artist.name, (artistCounts.get(artist.name) || 0) + 1);
+                    }
+                }
+            }
+            url = data.next;
+        }
+    } catch (error) {
+        console.warn(`Could not determine top artist for playlist ${playlistId}: ${error.message}`);
+        return '';
+    }
+
+    return [...artistCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
 async function fetchSpotifyData() {
     // If SKIP_FETCH is set, copy local playlists.json to public and exit
     if (process.env.SKIP_FETCH === 'true') {
@@ -40,12 +75,10 @@ async function fetchSpotifyData() {
             body: 'grant_type=client_credentials',
         });
 
-        // capture full response for debugging
         const authText = await authRes.text();
         let authData;
-        try { authData = JSON.parse(authText); } catch (e) { authData = { raw: authText }; }
+        try { authData = JSON.parse(authText);         } catch (e) { authData = { raw: authText }; }
         console.log('Auth response status:', authRes.status);
-        console.log('Auth response body:', authData);
 
         if (!authRes.ok) {
             // provide more context in error
@@ -90,14 +123,14 @@ async function fetchSpotifyData() {
             localData = JSON.parse(fs.readFileSync(localPlaylistsPath, 'utf8'));
         }
 
-        // 4. Transform data
-        // The original app took the first half of playlists
-        const halfCount = Math.floor(allPlaylists.length / 2);
-        const playlistItems = allPlaylists.slice(0, halfCount);
-
-        const transformed = playlistItems.map(p => {
+        // 4. Transform all fetched playlists
+        const transformed = await Promise.all(allPlaylists.map(async p => {
             const maybeName = p?.name || "";
             const localEntry = localData.find(ld => {
+                if (!ld) return false;
+                if (ld.link && p?.external_urls?.spotify && ld.link === p.external_urls.spotify) {
+                    return true;
+                }
                 if (!ld || !ld.title || !maybeName) return false;
                 try {
                     const a = String(ld.title).trim().toLowerCase();
@@ -107,6 +140,8 @@ async function fetchSpotifyData() {
                     return false;
                 }
             });
+
+            const topArtist = localEntry?.topArtist || localEntry?.artist || await findTopArtist(p, accessToken);
 
             return {
                 title: p.name || "İsimsiz Playlist",
@@ -118,9 +153,9 @@ async function fetchSpotifyData() {
                 // playlist owner display name as a fallback because it often
                 // equals the account that created the playlists and causes the
                 // same name to appear across many cards.
-                topArtist: localEntry?.artist || "",
+                topArtist,
             };
-        });
+        }));
 
         // 5. Save to public/playlists.json (Vite serves this)
         const outputPath = path.join(__dirname, '../public/playlists.json');

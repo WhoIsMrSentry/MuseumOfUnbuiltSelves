@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
     define: {
       'globalThis.__SPOTIFY_CLIENT_ID__': JSON.stringify(clientId),
       'globalThis.__SPOTIFY_REDIRECT_URI__': JSON.stringify(redirectUri),
+      'globalThis.__BASE_URL__': JSON.stringify('/MuseumOfUnbuiltSelves/'),
     },
   };
 });

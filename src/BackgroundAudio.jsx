@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+const BASE_URL =
+  typeof globalThis !== 'undefined' && typeof globalThis.__BASE_URL__ === 'string'
+    ? globalThis.__BASE_URL__
+    : '/';
+
 export default function BackgroundAudio({ src, autoplay = true }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [blocked, setBlocked] = useState(false);
 
-  const audioSrc = src || (import.meta.env.BASE_URL || '/') + 'shade_theme.mp3';
+  const audioSrc = src || BASE_URL + 'shade_theme.mp3';
 
   useEffect(() => {
     const audio = audioRef.current;
